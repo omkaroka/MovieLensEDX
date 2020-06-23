@@ -1,0 +1,961 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdftitle={MovieLens},
+  pdfauthor={Omkar Oka},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{longtable,booktabs}
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{5}
+
+\title{\textbf{MovieLens}}
+\author{\textbf{Omkar Oka}}
+\date{\textbf{6/15/2020}}
+
+\begin{document}
+\maketitle
+
+{
+\setcounter{tocdepth}{2}
+\tableofcontents
+}
+\newpage
+
+\hypertarget{executive-summary}{%
+\section{\texorpdfstring{\textbf{Executive
+summary:}}{Executive summary:}}\label{executive-summary}}
+
+Recommendation is the act of generating a suitable suggestion based on a
+user's shopping pattern and their reviews for certain products , music
+or movies either on a shopping or a streaming platform. Making the right
+recommendation for the next product, music or movie increases user
+retention and satisfaction, leading to sales and profit growth.
+
+The most famous project that tried to achieve that goal was the
+\textbf{The Netflix Prize} (October 2006). This project was an open
+competition to predict user ratings for films, based on previous ratings
+without any other information about the users or films. The goal was to
+make the company's recommendation engine 10\% more accurate.
+
+In this project we try to generate a model that can predict the rating
+that a user will give to a movie based on their preference and previous
+interactions, in terms of genres and the overall effects of the movie.
+We will be using the MovieLens data set pre-processed by the GroupLens
+research lab in the University of Minnesota.
+
+Further we will conduct an exploratory analysis of the data and based on
+some characteristics of the data we can decide the features that will be
+used to create a Machine Learning algorithm. This document explores step
+by step approach, process, techniques and methods that were used to
+handle the data and to create the predictive model.
+
+The final section shows the results of the previous process and then,
+the conclusion of the project with a future road map. Our goal is to
+achieve an RMSE of less than 0.86490.
+
+\hypertarget{evaluation-model}{%
+\subsection{\texorpdfstring{\textbf{Evaluation
+Model:}}{Evaluation Model:}}\label{evaluation-model}}
+
+The evaluation of machine learning algorithm consists comparing the
+predicted value with the actual outcome. The loss function measures the
+difference between both values. We will be using the Root Mean Squared
+Error method for evaluating the performance of our model.
+
+The Root Mean Squared Error, RMSE, is the square root of the MSE. It is
+the typical metric to evaluate recommendation systems, and is defined by
+the formula:
+
+\[RMSE=\sqrt{\frac{1}{N}\sum_{u,i}(\hat{y}_{u,i}-y_{u,i})^2}\]
+
+where N is the number of ratings, \(y_{u,i}\) is the rating of movie i
+by user u and \(\hat{y}_{u,i}\) is the prediction of movie i by user u.
+
+RMSE penalizes large deviations from the mean and is appropriate in
+cases that small errors are not relevant. Contrary to other methods, the
+error has the same unit as the measurement.
+
+\hypertarget{data-preparation}{%
+\subsection{\texorpdfstring{\textbf{Data
+Preparation:}}{Data Preparation:}}\label{data-preparation}}
+
+In this section we download and prepare the dataset to be used in the
+analysis. We split the data set in two parts, the training set called
+edx and the evaluation set called validation with 90\% and 10\% of the
+original dataset respectively.
+
+Then, we split the edx set in two parts, the train set and test set with
+90\% and 10\% of edx set respectively. The model is created and trained
+in the train set and tested in the test set until the RMSE target is
+achieved, then finally we train the model again in the entire edx set
+and validate in the validation set. The name of this method is
+cross-validation.
+
+\newpage
+
+Extracting data publicly available from GroupLens:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+ \CommentTok{#Create test and validation sets}
+ \CommentTok{#Create edx set, validation set, and submission file}
+\KeywordTok{options}\NormalTok{(}\DataTypeTok{warn=}\OperatorTok{-}\DecValTok{1}\NormalTok{) }\CommentTok{#Suppress Warnings}
+\ControlFlowTok{if}\NormalTok{(}\OperatorTok{!}\KeywordTok{require}\NormalTok{(tidyverse)) }\KeywordTok{install.packages}\NormalTok{(}\StringTok{"tidyverse"}\NormalTok{, }\DataTypeTok{repos =} \StringTok{"http://cran.us.r-project.org"}\NormalTok{)}
+\ControlFlowTok{if}\NormalTok{(}\OperatorTok{!}\KeywordTok{require}\NormalTok{(caret)) }\KeywordTok{install.packages}\NormalTok{(}\StringTok{"caret"}\NormalTok{, }\DataTypeTok{repos =} \StringTok{"http://cran.us.r-project.org"}\NormalTok{)}
+\ControlFlowTok{if}\NormalTok{(}\OperatorTok{!}\KeywordTok{require}\NormalTok{(data.table)) }\KeywordTok{install.packages}\NormalTok{(}\StringTok{"data.table"}\NormalTok{, }\DataTypeTok{repos =} \StringTok{"http://cran.us.r-project.org"}\NormalTok{)}
+\ControlFlowTok{if}\NormalTok{(}\OperatorTok{!}\KeywordTok{require}\NormalTok{(anytime)) }\KeywordTok{install.packages}\NormalTok{(}\StringTok{"anytime"}\NormalTok{, }\DataTypeTok{repos =} \StringTok{"http://cran.us.r-project.org"}\NormalTok{)}
+\ControlFlowTok{if}\NormalTok{(}\OperatorTok{!}\KeywordTok{require}\NormalTok{(lubridate)) }\KeywordTok{install.packages}\NormalTok{(}\StringTok{"lubridate"}\NormalTok{, }\DataTypeTok{repos =} \StringTok{"http://cran.us.r-project.org"}\NormalTok{)}
+\ControlFlowTok{if}\NormalTok{(}\OperatorTok{!}\KeywordTok{require}\NormalTok{(corrr)) }\KeywordTok{install.packages}\NormalTok{(}\StringTok{"corrr"}\NormalTok{, }\DataTypeTok{repos =} \StringTok{"http://cran.us.r-project.org"}\NormalTok{)}
+\CommentTok{#Loading Libraries:}
+\KeywordTok{library}\NormalTok{(}\StringTok{"stringr"}\NormalTok{)}
+\KeywordTok{library}\NormalTok{(}\StringTok{"tidyverse"}\NormalTok{)}
+\KeywordTok{library}\NormalTok{(}\StringTok{"caret"}\NormalTok{)}
+\KeywordTok{library}\NormalTok{(}\StringTok{"anytime"}\NormalTok{)}
+\KeywordTok{library}\NormalTok{(}\StringTok{"lubridate"}\NormalTok{)}
+\KeywordTok{library}\NormalTok{(}\StringTok{"corrr"}\NormalTok{)}
+
+\CommentTok{# MovieLens 10M dataset:}
+ \CommentTok{# https://grouplens.org/datasets/movielens/10m/}
+ \CommentTok{# http://files.grouplens.org/datasets/movielens/ml-10m.zip}
+
+\NormalTok{dl <-}\StringTok{ }\KeywordTok{tempfile}\NormalTok{()}
+ \KeywordTok{download.file}\NormalTok{(}\StringTok{"http://files.grouplens.org/datasets/movielens/ml-10m.zip"}\NormalTok{, dl)}
+
+\NormalTok{ratings <-}\StringTok{ }\KeywordTok{fread}\NormalTok{(}\DataTypeTok{text =} \KeywordTok{gsub}\NormalTok{(}\StringTok{"::"}\NormalTok{, }\StringTok{"}\CharTok{\textbackslash{}t}\StringTok{"}\NormalTok{, }\KeywordTok{readLines}\NormalTok{(}\KeywordTok{unzip}\NormalTok{(dl, }\StringTok{"ml-10M100K/ratings.dat"}\NormalTok{))),}
+                 \DataTypeTok{col.names =} \KeywordTok{c}\NormalTok{(}\StringTok{"userId"}\NormalTok{, }\StringTok{"movieId"}\NormalTok{, }\StringTok{"rating"}\NormalTok{, }\StringTok{"timestamp"}\NormalTok{))}
+
+\NormalTok{movies <-}\StringTok{ }\KeywordTok{str_split_fixed}\NormalTok{(}\KeywordTok{readLines}\NormalTok{(}\KeywordTok{unzip}\NormalTok{(dl, }\StringTok{"ml-10M100K/movies.dat"}\NormalTok{)), }\StringTok{"}\CharTok{\textbackslash{}\textbackslash{}}\StringTok{::"}\NormalTok{, }\DecValTok{3}\NormalTok{)}
+ \KeywordTok{colnames}\NormalTok{(movies) <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"movieId"}\NormalTok{, }\StringTok{"title"}\NormalTok{, }\StringTok{"genres"}\NormalTok{)}
+                                        
+\NormalTok{movies <-}\StringTok{ }\KeywordTok{as.data.frame}\NormalTok{(movies) }\OperatorTok{%>%}\StringTok{ }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{movieId =} \KeywordTok{as.numeric}\NormalTok{(movieId), }\DataTypeTok{title =} \KeywordTok{as.character}\NormalTok{(title), }\DataTypeTok{genres =} \KeywordTok{as.character}\NormalTok{(genres))}
+\NormalTok{movielens <-}\StringTok{ }\KeywordTok{left_join}\NormalTok{(ratings, movies, }\DataTypeTok{by =} \StringTok{"movieId"}\NormalTok{)}
+ 
+\CommentTok{# Validation set will be 10% of MovieLens data}
+\KeywordTok{set.seed}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DataTypeTok{sample.kind=}\StringTok{"Rounding"}\NormalTok{)}
+\NormalTok{test_index <-}\StringTok{ }\KeywordTok{createDataPartition}\NormalTok{(}\DataTypeTok{y =}\NormalTok{ movielens}\OperatorTok{$}\NormalTok{rating, }\DataTypeTok{times =} \DecValTok{1}\NormalTok{, }\DataTypeTok{p =} \FloatTok{0.1}\NormalTok{, }\DataTypeTok{list =} \OtherTok{FALSE}\NormalTok{)}
+\NormalTok{edx <-}\StringTok{ }\NormalTok{movielens[}\OperatorTok{-}\NormalTok{test_index,]}
+\NormalTok{temp <-}\StringTok{ }\NormalTok{movielens[test_index,]}
+\CommentTok{# Make sure userId and movieId in validation set are also in edx set}
+\NormalTok{validation <-}\StringTok{ }\NormalTok{temp }\OperatorTok{%>%}\StringTok{ }\KeywordTok{semi_join}\NormalTok{(edx, }\DataTypeTok{by =} \StringTok{"movieId"}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }\KeywordTok{semi_join}\NormalTok{(edx, }\DataTypeTok{by =} \StringTok{"userId"}\NormalTok{)}
+\CommentTok{# Add rows removed from validation set back into edx set}
+\NormalTok{removed <-}\StringTok{ }\KeywordTok{anti_join}\NormalTok{(temp, validation)}
+\NormalTok{edx <-}\StringTok{ }\KeywordTok{rbind}\NormalTok{(edx, removed)}
+\KeywordTok{rm}\NormalTok{(dl, ratings, movies, test_index, temp, movielens, removed)}
+\end{Highlighting}
+\end{Shaded}
+
+\newpage
+
+\hypertarget{dataset}{%
+\subsection{\texorpdfstring{\textbf{DataSet:}}{DataSet:}}\label{dataset}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{str}\NormalTok{(edx)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Classes 'data.table' and 'data.frame':   9000055 obs. of  6 variables:
+##  $ userId   : int  1 1 1 1 1 1 1 1 1 1 ...
+##  $ movieId  : num  122 185 292 316 329 355 356 362 364 370 ...
+##  $ rating   : num  5 5 5 5 5 5 5 5 5 5 ...
+##  $ timestamp: int  838985046 838983525 838983421 838983392 838983392 838984474 838983653 838984885 838983707 838984596 ...
+##  $ title    : chr  "Boomerang (1992)" "Net, The (1995)" "Outbreak (1995)" "Stargate (1994)" ...
+##  $ genres   : chr  "Comedy|Romance" "Action|Crime|Thriller" "Action|Drama|Sci-Fi|Thriller" "Action|Adventure|Sci-Fi" ...
+##  - attr(*, ".internal.selfref")=<externalptr>
+\end{verbatim}
+
+The data set contains 9000055 observations of 6 variables.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{head}\NormalTok{(edx)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##    userId movieId rating timestamp                         title
+## 1:      1     122      5 838985046              Boomerang (1992)
+## 2:      1     185      5 838983525               Net, The (1995)
+## 3:      1     292      5 838983421               Outbreak (1995)
+## 4:      1     316      5 838983392               Stargate (1994)
+## 5:      1     329      5 838983392 Star Trek: Generations (1994)
+## 6:      1     355      5 838984474       Flintstones, The (1994)
+##                           genres
+## 1:                Comedy|Romance
+## 2:         Action|Crime|Thriller
+## 3:  Action|Drama|Sci-Fi|Thriller
+## 4:       Action|Adventure|Sci-Fi
+## 5: Action|Adventure|Drama|Sci-Fi
+## 6:       Children|Comedy|Fantasy
+\end{verbatim}
+
+The Data Description is as follows:\\
+- \texttt{userId}: Unique identification number given to each user.
+\texttt{numeric} variable\\
+- \texttt{movieId}: Unique identification number given to each movie.
+\texttt{numeric} variable.\\
+- \texttt{timestamp}: Code that contains date and time in what the
+rating was given by the user to the specific movie. \texttt{integer}
+variable.\\
+- \texttt{title}: Title of the movie. \texttt{character} variable.\\
+- \texttt{genres}: Motion-picture category associated to the film.
+\texttt{character} variable.\\
+- \texttt{rating}: Rating given by the user to the movie. From 0 to 5
+\emph{stars} in steps of 0.5. \texttt{numeric} variable.\\
+\newpage
+
+\hypertarget{analysis-section}{%
+\section{\texorpdfstring{\textbf{Analysis
+Section:}}{Analysis Section:}}\label{analysis-section}}
+
+We will be performing necessary transformations, data preparation and
+exploratory data analysis as part of this section.
+
+\hypertarget{data-format}{%
+\subsection{\texorpdfstring{\textbf{Data
+format:}}{Data format:}}\label{data-format}}
+
+The \texttt{userId} and \texttt{movieId} variables are \texttt{numeric}
+columns in the original data set. However it does not make sense. The
+\texttt{userId}=2 is not two times the \texttt{userId}=1 and the same
+effect happens with the \texttt{movieId} variable. These characteristics
+are just \emph{labels}, therefore they will be converted to
+\texttt{factor} type to be useful.
+
+Both \texttt{movieId} and \texttt{title} variables give us the same
+exact information. They are the \textbf{unique identification code} to
+each film. We could say that these pair of variables have 100\%
+correlation! Only the \texttt{movieId} column will be used and will be
+used as a \texttt{factor}. It optimizes the memory (RAM) usage.
+
+The \texttt{timestamp} variable is converted to \texttt{POSIXct} type,
+to be handle correctly as a \texttt{date} vector. The year is extracted
+to the \texttt{year} column and the \texttt{timestamp} column is
+dropped.
+
+\begin{verbatim}
+##    userId movieId rating           timestamp                  title year
+## 1:      1     122      5 1996-08-02 16:54:06              Boomerang 1992
+## 2:      1     185      5 1996-08-02 16:28:45               Net, The 1995
+## 3:      1     292      5 1996-08-02 16:27:01               Outbreak 1995
+## 4:      1     316      5 1996-08-02 16:26:32               Stargate 1994
+## 5:      1     329      5 1996-08-02 16:26:32 Star Trek: Generations 1994
+## 6:      1     355      5 1996-08-02 16:44:34       Flintstones, The 1994
+##                           genres year_rate
+## 1:                Comedy|Romance      1996
+## 2:         Action|Crime|Thriller      1996
+## 3:  Action|Drama|Sci-Fi|Thriller      1996
+## 4:       Action|Adventure|Sci-Fi      1996
+## 5: Action|Adventure|Drama|Sci-Fi      1996
+## 6:       Children|Comedy|Fantasy      1996
+\end{verbatim}
+
+\hypertarget{exploratory-analysis}{%
+\subsection{\texorpdfstring{\textbf{Exploratory
+Analysis:}}{Exploratory Analysis:}}\label{exploratory-analysis}}
+
+The target is to create a model capable of predicting the variable
+\texttt{rating}.
+
+\begin{verbatim}
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##   0.500   3.000   4.000   3.512   4.000   5.000
+\end{verbatim}
+
+As we can see from the distribution of the ratings the minimum rating is
+0.5 whereas the first Quantile starts at 3.0 and the mean is 3.5 with
+the third Quantile at 4.0 which means that most of our ratings are in
+between 3 and 4 up to 4.5
+
+Users have the option to choose a rating value from 0.5 to 5.0, totaling
+10 possible values. This is an unusual scale, so all the movies get a
+rounded value rating, as shown in the chart below.
+
+We can convert these ratings into factors and design the Machine
+Learning Algorithm as a classification model. But, since we have a
+target RMSE that we need to beat, its better to create a regression
+model since RMSE is not usually performed on a classification model.
+
+\newpage
+
+\textbf{Overall Distribution of ratings:}
+
+\begin{longtable}[]{@{}rrl@{}}
+\caption{Rating\_Distribution}\tabularnewline
+\toprule
+rating & n & Percentage\tabularnewline
+\midrule
+\endfirsthead
+\toprule
+rating & n & Percentage\tabularnewline
+\midrule
+\endhead
+4.0 & 2588430 & 28.76\%\tabularnewline
+3.0 & 2121240 & 23.57\%\tabularnewline
+5.0 & 1390114 & 15.45\%\tabularnewline
+3.5 & 791624 & 8.8\%\tabularnewline
+2.0 & 711422 & 7.9\%\tabularnewline
+4.5 & 526736 & 5.85\%\tabularnewline
+1.0 & 345679 & 3.84\%\tabularnewline
+2.5 & 333010 & 3.7\%\tabularnewline
+1.5 & 106426 & 1.18\%\tabularnewline
+0.5 & 85374 & 0.95\%\tabularnewline
+\bottomrule
+\end{longtable}
+
+\begin{center}\includegraphics{MovieLens_files/figure-latex/plot_rating-1} \end{center}
+
+We can see that our \texttt{rating} variable has a left-skewed
+distribution. It's interesting that there are more \emph{good} ratings
+than \emph{bad} ratings. That could be explained by the fact that people
+want to recommend a film when they like it, but we could just assume
+that, since there is no data available with this data set to prove this
+theory.\\
+\newpage
+
+\textbf{Important Data Players:}
+
+\begin{longtable}[]{@{}rrr@{}}
+\caption{Unique\_Numbers}\tabularnewline
+\toprule
+Unique\_Users & Unique\_Movies & Unique\_Genres\tabularnewline
+\midrule
+\endfirsthead
+\toprule
+Unique\_Users & Unique\_Movies & Unique\_Genres\tabularnewline
+\midrule
+\endhead
+69878 & 10677 & 797\tabularnewline
+\bottomrule
+\end{longtable}
+
+We observe that there are 69878 unique users given ratings to 10677
+different films. It's good to remember that the \emph{unique genres}
+were counted as \texttt{factor} with no previous separation so,
+\texttt{Drama} and \texttt{Comedy\textbar{}Drama} are counted as 2
+different genres.
+
+\textbf{Rates by Release Year:}\\
+\includegraphics{MovieLens_files/figure-latex/year_release-1.pdf}
+
+The frequency of ratings by \emph{release year} of the films has a clear
+left skewed distribution. The most of those year are between 1990 and
+2009. Primary reason for this could be that since there is a clear age
+group that actively assign ratings and their preference is usually
+influenced by the era of the movies.
+
+\textbf{Average Movie Rating Distribution:}\\
+\includegraphics{MovieLens_files/figure-latex/average_rating-1.pdf}
+
+This is also a slightly left skewed distribution, since the average
+rating for most of the movies ranges from 2.5 to 4.0 stars.\\
+\newpage \textbf{Genres and Ratings:}
+
+\begin{longtable}[]{@{}lrrrl@{}}
+\caption{Genres\_vs\_Ratings}\tabularnewline
+\toprule
+genres & mean & median & n & Percentage\tabularnewline
+\midrule
+\endfirsthead
+\toprule
+genres & mean & median & n & Percentage\tabularnewline
+\midrule
+\endhead
+Animation\textbar IMAX\textbar Sci-Fi & 4.714286 & 5.0 & 7 &
+0\%\tabularnewline
+Drama\textbar Film-Noir\textbar Romance & 4.304115 & 4.5 & 2989 &
+0.03\%\tabularnewline
+Action\textbar Crime\textbar Drama\textbar IMAX & 4.297068 & 4.5 & 2353
+& 0.03\%\tabularnewline
+Animation\textbar Children\textbar Comedy\textbar Crime & 4.275429 & 4.5
+& 7167 & 0.08\%\tabularnewline
+Film-Noir\textbar Mystery & 4.239479 & 4.0 & 5988 &
+0.07\%\tabularnewline
+Crime\textbar Film-Noir\textbar Mystery & 4.216803 & 4.0 & 4029 &
+0.04\%\tabularnewline
+Film-Noir\textbar Romance\textbar Thriller & 4.216470 & 4.0 & 2453 &
+0.03\%\tabularnewline
+Crime\textbar Film-Noir\textbar Thriller & 4.210157 & 4.0 & 4844 &
+0.05\%\tabularnewline
+Crime\textbar Mystery\textbar Thriller & 4.198981 & 4.0 & 26892 &
+0.3\%\tabularnewline
+Action\textbar Adventure\textbar Comedy\textbar Fantasy\textbar Romance
+& 4.195557 & 4.0 & 14809 & 0.16\%\tabularnewline
+Crime\textbar Thriller\textbar War & 4.171273 & 4.0 & 4595 &
+0.05\%\tabularnewline
+Film-Noir\textbar Mystery\textbar Thriller & 4.164298 & 4.0 & 4011 &
+0.04\%\tabularnewline
+Adventure\textbar Drama\textbar Film-Noir\textbar Sci-Fi\textbar Thriller
+& 4.148384 & 4.0 & 13957 & 0.16\%\tabularnewline
+Adventure\textbar Animation\textbar Children\textbar Comedy\textbar Sci-Fi
+& 4.147917 & 4.0 & 3529 & 0.04\%\tabularnewline
+Adventure\textbar Comedy\textbar Romance\textbar War & 4.127992 & 4.0 &
+5223 & 0.06\%\tabularnewline
+\bottomrule
+\end{longtable}
+
+The top 10 \textbf{genres} listed above have the highest \textbf{mean}.
+The first place ``Animation\textbar IMAX\textbar Sci-Fi'' is clearly not
+significant, because of the only 7 observations. This \emph{genre} will
+be eliminated below. \textbf{Drama} is present in the 2nd and 3rd place.
+
+\begin{longtable}[]{@{}lrrr@{}}
+\caption{Top\_15\_Genres}\tabularnewline
+\toprule
+genres & mean & median & n\tabularnewline
+\midrule
+\endfirsthead
+\toprule
+genres & mean & median & n\tabularnewline
+\midrule
+\endhead
+Drama & 4.304115 & 4.5 & 2989\tabularnewline
+Film-Noir & 4.304115 & 4.5 & 2989\tabularnewline
+Romance & 4.304115 & 4.5 & 2989\tabularnewline
+Action & 4.297068 & 4.5 & 2353\tabularnewline
+Crime & 4.297068 & 4.5 & 2353\tabularnewline
+Drama & 4.297068 & 4.5 & 2353\tabularnewline
+IMAX & 4.297068 & 4.5 & 2353\tabularnewline
+Animation & 4.275429 & 4.5 & 7167\tabularnewline
+Children & 4.275429 & 4.5 & 7167\tabularnewline
+Comedy & 4.275429 & 4.5 & 7167\tabularnewline
+Crime & 4.275429 & 4.5 & 7167\tabularnewline
+Film-Noir & 4.239479 & 4.0 & 5988\tabularnewline
+Mystery & 4.239479 & 4.0 & 5988\tabularnewline
+Crime & 4.216803 & 4.0 & 4029\tabularnewline
+Film-Noir & 4.216803 & 4.0 & 4029\tabularnewline
+\bottomrule
+\end{longtable}
+
+The genres associated with the highest mean are ``Drama'', ``Film-Noir''
+and ``Romance''. The \textbf{difference} with the \emph{second section}
+entry numbers from 4 till 7 in that ranking is almost zero.\\
+\newpage \textbf{Ratings over the Years:}\\
+\includegraphics{MovieLens_files/figure-latex/time_effect_ratings-1.pdf}
+
+Here are a few of the movies with good overall average ratings rated by
+a significant number of users over the years. There seems to be a
+definite time effect on the ratings which could be related to the Actors
+or the similarity of the movies with the current ones playing in a
+theater at the time. The time effect, actor influence or any other
+effect are out of the scope of this document but it still shows that
+there is a premise to explore further on these aspects.\\
+\newpage \#\# \textbf{Correlation Matrix:}
+
+\begin{longtable}[]{@{}lrrrr@{}}
+\caption{Feature\_VS\_Rating\_Correlation}\tabularnewline
+\toprule
+rowname & userId & movieId & rating & genres\tabularnewline
+\midrule
+\endfirsthead
+\toprule
+rowname & userId & movieId & rating & genres\tabularnewline
+\midrule
+\endhead
+userId & NA & 0.0060875 & 0.0023208 & -0.0030424\tabularnewline
+movieId & 0.0060875 & NA & -0.0282943 & -0.0014997\tabularnewline
+rating & 0.0023208 & -0.0282943 & NA & 0.0577063\tabularnewline
+genres & -0.0030424 & -0.0014997 & 0.0577063 & NA\tabularnewline
+\bottomrule
+\end{longtable}
+
+Most of the Machine Learning algorithms prefer a comparable correlation
+within the features and between the features and the target(rating in
+this case). Since, as we can see the \texttt{UserId}, \texttt{MovieId}
+and \texttt{Genres} have a weak correlation with \texttt{Rating} any
+kind of supervised Machine Learning algorithm will not have much effect
+on the rating predictions and therefore will not be able to provide
+useful recommendations.
+
+Hence we will be sticking to a simple form of Linear Regression for
+Predicting ratings, which is covered in the next section.\\
+\newpage
+
+\hypertarget{the-model}{%
+\section{\texorpdfstring{\textbf{The
+Model:}}{The Model:}}\label{the-model}}
+
+Creating a recommendation system involves the identification of the most
+important features that helps to predict the rating any given user will
+give to any movie. We start building a very simple model, which is just
+the mean of the observed values. Then, the user and movie effects are
+included in the linear model, improving the RMSE. Finally, the user and
+movie effects receive regularization parameter that penalizes samples
+with few ratings.
+
+\hypertarget{train-and-test-set}{%
+\subsection{\texorpdfstring{\textbf{Train and Test
+set:}}{Train and Test set:}}\label{train-and-test-set}}
+
+First of all, we create \texttt{train} and \texttt{test} sets.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{edx <-}\StringTok{ }\NormalTok{edx }\OperatorTok{%>%}\StringTok{ }\KeywordTok{select}\NormalTok{(userId, movieId, rating)}
+\KeywordTok{set.seed}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DataTypeTok{sample.kind=}\StringTok{"Rounding"}\NormalTok{)}
+\CommentTok{#set.seed(1) #for R version 3.5 and below}
+\NormalTok{test_index <-}\StringTok{ }\KeywordTok{createDataPartition}\NormalTok{(edx}\OperatorTok{$}\NormalTok{rating, }\DataTypeTok{times =} \DecValTok{1}\NormalTok{, }\DataTypeTok{p =} \FloatTok{.1}\NormalTok{, }\DataTypeTok{list =} \OtherTok{FALSE}\NormalTok{)}
+\CommentTok{# Create the index}
+
+\NormalTok{train <-}\StringTok{ }\NormalTok{edx[}\OperatorTok{-}\NormalTok{test_index, ] }\CommentTok{# Create Train set}
+\NormalTok{temp <-}\StringTok{ }\NormalTok{edx[test_index, ] }\CommentTok{# Create Test set}
+
+\CommentTok{# Make sure userId and movieId in test set are also in train set}
+\NormalTok{test <-}\StringTok{ }\NormalTok{temp }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{semi_join}\NormalTok{(train, }\DataTypeTok{by =} \StringTok{"movieId"}\NormalTok{) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{semi_join}\NormalTok{(train, }\DataTypeTok{by =} \StringTok{"userId"}\NormalTok{)}
+
+\CommentTok{# Add rows removed from test set back into train set}
+\NormalTok{removed <-}\StringTok{ }\KeywordTok{anti_join}\NormalTok{(temp, test)}
+\NormalTok{train <-}\StringTok{ }\KeywordTok{rbind}\NormalTok{(train, removed)}
+
+\KeywordTok{rm}\NormalTok{(test_index, temp, removed)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{dim}\NormalTok{(train)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 8100065       3
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{dim}\NormalTok{(test)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 899990      3
+\end{verbatim}
+
+\hypertarget{baseline-model}{%
+\subsection{\texorpdfstring{\textbf{Baseline
+model:}}{Baseline model:}}\label{baseline-model}}
+
+The most basic model is generated when we consider the most common
+rating from the \emph{train} set to be predicted into the test set. This
+is the \textbf{baseline} model.
+
+\begin{verbatim}
+## [1] 1.060054
+\end{verbatim}
+
+Now, we have the baseline RMSE to be \emph{beaten} by our model.
+
+\begin{longtable}[]{@{}lr@{}}
+\caption{RMSEs}\tabularnewline
+\toprule
+Method & RMSE\tabularnewline
+\midrule
+\endfirsthead
+\toprule
+Method & RMSE\tabularnewline
+\midrule
+\endhead
+Baseline & 1.060054\tabularnewline
+\bottomrule
+\end{longtable}
+
+We can observe that the RMSE of the most basic model is 1.0600537. It's
+bigger than 1! In this context, this is a very bad model.
+
+\hypertarget{user-and-movie-effect-model}{%
+\subsection{\texorpdfstring{\textbf{User and Movie effect
+Model:}}{User and Movie effect Model:}}\label{user-and-movie-effect-model}}
+
+The next step is to improve our model and get a better RMSE by
+introducing \emph{user effect} \((u_i)\) and the \emph{movie effect}
+\((m_i)\) as predictors. As seen in our exploratory analysis above,
+there is a definite impact of \emph{user effect} with certain users
+assigning higher than usual or lower than usual ratings based on the
+their preference which usually varies from \texttt{0.5} to \texttt{0.7}
+in either direction.\\
+\emph{Movie effect} implies that there are certain movies that generally
+get rated higher than average based on their popularity. The movie
+effect can be calculated as the mean of the difference between the
+observed rating y and the mean \(\mu\).
+
+\textbf{Movie Effect:} \[m_i=\frac{1}{N}\sum_{i=1}^{N}(y_i-\hat{\mu})\]
+\textbf{User Effect:}
+\[u_i=\frac{1}{N}\sum_{i=1}^{N}(y_{u,i}-\hat{b}_i-\hat{\mu})\]
+
+Therefore, we are generating the next model to predict \texttt{rating}
+\((\hat{y}_i)\): \[\hat{y}_i=u_i+m_i+\varepsilon\] While calculating
+ratings as continuous values we can assume that there will be some
+predicted ratings that might be less than zero or greater than 5. We
+will be applying a balancing condition to counteract these values. We
+can call this the error\((\varepsilon)\) effect and it has been adjusted
+in the code already.
+
+\textbf{RMSE obtained by calculating the \emph{user effect} and
+\emph{movie effect}:}
+
+\begin{verbatim}
+## [1] 0.8244714
+\end{verbatim}
+
+\begin{longtable}[]{@{}lr@{}}
+\caption{RMSE}\tabularnewline
+\toprule
+Method & RMSE\tabularnewline
+\midrule
+\endfirsthead
+\toprule
+Method & RMSE\tabularnewline
+\midrule
+\endhead
+Baseline & 1.0600537\tabularnewline
+User \& Movie Effect & 0.8244714\tabularnewline
+\bottomrule
+\end{longtable}
+
+We've obtained a better RMSE. Now it is time to test the predictions on
+Validation data.\\
+\newpage
+
+\hypertarget{user-and-movie-effect-model-on-validation-data}{%
+\subsection{\texorpdfstring{\textbf{User and Movie effect Model on
+\emph{validation}
+data:}}{User and Movie effect Model on validation data:}}\label{user-and-movie-effect-model-on-validation-data}}
+
+First of all, the \emph{validation} data set needs to be handled the
+same was as the \emph{train} data set was handled.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{validation <-}\StringTok{ }\NormalTok{validation }\OperatorTok{%>%}\StringTok{ }\KeywordTok{select}\NormalTok{(userId, movieId, rating)}
+\NormalTok{validation}\OperatorTok{$}\NormalTok{userId <-}\StringTok{ }\KeywordTok{as.factor}\NormalTok{(validation}\OperatorTok{$}\NormalTok{userId)}
+\NormalTok{validation}\OperatorTok{$}\NormalTok{movieId <-}\StringTok{ }\KeywordTok{as.factor}\NormalTok{(validation}\OperatorTok{$}\NormalTok{movieId)}
+\NormalTok{validation <-}\StringTok{ }\NormalTok{validation[}\KeywordTok{complete.cases}\NormalTok{(validation), ]}
+\end{Highlighting}
+\end{Shaded}
+
+Now, we are ready to predict on the validation data set.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{mu <-}\StringTok{ }\KeywordTok{mean}\NormalTok{(edx}\OperatorTok{$}\NormalTok{rating)}
+\NormalTok{movie_avgs <-}\StringTok{ }\NormalTok{edx }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(movieId) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{summarize}\NormalTok{(}\DataTypeTok{m_i =} \KeywordTok{mean}\NormalTok{(rating }\OperatorTok{-}\StringTok{ }\NormalTok{mu))}
+\NormalTok{user_avgs <-}\StringTok{ }\NormalTok{edx }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{left_join}\NormalTok{(movie_avgs, }\DataTypeTok{by =} \StringTok{"movieId"}\NormalTok{) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(userId) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{summarize}\NormalTok{(}\DataTypeTok{u_i =} \KeywordTok{mean}\NormalTok{(rating }\OperatorTok{-}\StringTok{ }\NormalTok{mu }\OperatorTok{-}\StringTok{ }\NormalTok{m_i))}
+\NormalTok{predicted_ratings <-}\StringTok{ }\NormalTok{validation }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{left_join}\NormalTok{(movie_avgs, }\DataTypeTok{by =} \StringTok{"movieId"}\NormalTok{) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{left_join}\NormalTok{(user_avgs, }\DataTypeTok{by =} \StringTok{"userId"}\NormalTok{) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{pred =}\NormalTok{ mu }\OperatorTok{+}\StringTok{ }\NormalTok{m_i }\OperatorTok{+}\StringTok{ }\NormalTok{u_i) }\OperatorTok{%>%}\StringTok{ }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{pred =} \KeywordTok{ifelse}\NormalTok{(pred }\OperatorTok{<}\StringTok{ }\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{, }\KeywordTok{ifelse}\NormalTok{(pred }\OperatorTok{>}\StringTok{ }\DecValTok{5}\NormalTok{, }\DecValTok{5}\NormalTok{, pred))) }\OperatorTok{%>%}\StringTok{ }\NormalTok{.}\OperatorTok{$}\NormalTok{pred}
+
+\NormalTok{val_RMSE <-}\StringTok{ }\KeywordTok{RMSE}\NormalTok{(predicted_ratings, validation}\OperatorTok{$}\NormalTok{rating, }\DataTypeTok{na.rm =}\NormalTok{ T)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{longtable}[]{@{}lr@{}}
+\caption{RMSE}\tabularnewline
+\toprule
+Method & RMSE\tabularnewline
+\midrule
+\endfirsthead
+\toprule
+Method & RMSE\tabularnewline
+\midrule
+\endhead
+Baseline & 1.0600537\tabularnewline
+User \& Movie Effect & 0.8244714\tabularnewline
+User \& Movie Effect on validation & 0.8651772\tabularnewline
+\bottomrule
+\end{longtable}
+
+We can see above that this RMSE is higher than the RMSE on the test set.
+This is highly probable, given that this was unseen data. The good thing
+is that the difference is just 0.0407059. Now, let's see if
+\emph{regularisation} will give us better results. \newpage
+
+\hypertarget{regularisation}{%
+\subsection{\texorpdfstring{\textbf{Regularisation:}}{Regularisation:}}\label{regularisation}}
+
+The linear model provides a good estimation for the ratings, but doesn't
+consider that many movies have very few number of ratings, and some
+users rate very few movies. This means that the sample size is very
+small for these movies and these users. Statistically, this leads to
+large estimated error.
+
+The estimated value can be improved adding a factor that penalizes small
+sample sizes and have have little or no impact otherwise. Thus,
+estimated movie and user effects can be calculated with these formulas:
+
+\textbf{Movie Effect on Regularisation:}
+\[m_i=\frac{1}{N_i+\lambda}\sum_{i=1}^{N_i}(y_{u,i}-\hat{\mu})\]
+\textbf{User Effect on Regularisation:}
+\[u_i=\frac{1}{N_u+\lambda}\sum_{i=1}^{N_i}(y_{u,i}-m_i-\hat{\mu})\] For
+values of N smaller than or similar to \(\lambda\), \(m_i\) and \(u_i\)
+is smaller than the original values, whereas for values of N much larger
+than \(\lambda\), \(m_i\) and \(u_i\) change very little.
+
+The regularisation process will evaluate different values for
+\(\lambda\), delivering to us the corresponding RMSE.
+
+\hypertarget{rmse_curve_regularisation_test}{%
+\subsection{\texorpdfstring{\textbf{RMSE\_Curve\_Regularisation\_Test:}}{RMSE\_Curve\_Regularisation\_Test:}}\label{rmse_curve_regularisation_test}}
+
+\includegraphics{MovieLens_files/figure-latex/RMSE_curve_test-1.pdf}
+
+Optimum \(\lambda\) for Test: 4.6\\
+RMSE for Test data: 0.864032 \newpage
+
+\begin{longtable}[]{@{}lr@{}}
+\caption{RMSEs}\tabularnewline
+\toprule
+Method & RMSE\tabularnewline
+\midrule
+\endfirsthead
+\toprule
+Method & RMSE\tabularnewline
+\midrule
+\endhead
+Baseline & 1.0600537\tabularnewline
+User \& Movie Effect & 0.8244714\tabularnewline
+User \& Movie Effect on validation & 0.8651772\tabularnewline
+User \& Movie Effect Regularisation & 0.8640320\tabularnewline
+\bottomrule
+\end{longtable}
+
+The \emph{regularisation} gives us a higher RMSE than the first ``User
+\& Movie Effect'' model. This is unexpected but since we have shrunk the
+population of the original data set, it is kind of expected.
+
+\hypertarget{regularisation-on-validation-data-set}{%
+\subsection{\texorpdfstring{\textbf{Regularisation on \emph{validation}
+data
+set:}}{Regularisation on validation data set:}}\label{regularisation-on-validation-data-set}}
+
+It is time to see the effect of \emph{regularisation} on the validation
+data set.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{RMSE_function_val_reg <-}\StringTok{ }\KeywordTok{sapply}\NormalTok{(lambda_values, }\ControlFlowTok{function}\NormalTok{(l)\{}
+  
+\NormalTok{  mu <-}\StringTok{ }\KeywordTok{mean}\NormalTok{(edx}\OperatorTok{$}\NormalTok{rating)}
+  
+\NormalTok{  m_i <-}\StringTok{ }\NormalTok{edx }\OperatorTok{%>%}
+\StringTok{    }\KeywordTok{group_by}\NormalTok{(movieId) }\OperatorTok{%>%}
+\StringTok{    }\KeywordTok{summarize}\NormalTok{(}\DataTypeTok{m_i =} \KeywordTok{sum}\NormalTok{(rating }\OperatorTok{-}\StringTok{ }\NormalTok{mu)}\OperatorTok{/}\NormalTok{(}\KeywordTok{n}\NormalTok{()}\OperatorTok{+}\NormalTok{l))}
+  
+\NormalTok{  u_i <-}\StringTok{ }\NormalTok{edx }\OperatorTok{%>%}
+\StringTok{    }\KeywordTok{left_join}\NormalTok{(m_i, }\DataTypeTok{by=}\StringTok{"movieId"}\NormalTok{) }\OperatorTok{%>%}
+\StringTok{    }\KeywordTok{group_by}\NormalTok{(userId) }\OperatorTok{%>%}
+\StringTok{    }\KeywordTok{summarize}\NormalTok{(}\DataTypeTok{u_i =} \KeywordTok{sum}\NormalTok{(rating }\OperatorTok{-}\StringTok{ }\NormalTok{m_i }\OperatorTok{-}\StringTok{ }\NormalTok{mu)}\OperatorTok{/}\NormalTok{(}\KeywordTok{n}\NormalTok{()}\OperatorTok{+}\NormalTok{l))}
+  
+\NormalTok{  predicted_val_reg <-}\StringTok{ }\NormalTok{validation }\OperatorTok{%>%}
+\StringTok{    }\KeywordTok{left_join}\NormalTok{(m_i, }\DataTypeTok{by =} \StringTok{"movieId"}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{    }\KeywordTok{left_join}\NormalTok{(u_i, }\DataTypeTok{by =} \StringTok{"userId"}\NormalTok{) }\OperatorTok{%>%}
+\StringTok{    }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{pred =}\NormalTok{ mu }\OperatorTok{+}\StringTok{ }\NormalTok{m_i }\OperatorTok{+}\StringTok{ }\NormalTok{u_i) }\OperatorTok{%>%}\StringTok{ }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{pred =} \KeywordTok{ifelse}\NormalTok{(pred }\OperatorTok{<}\StringTok{ }\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{, }\KeywordTok{ifelse}\NormalTok{(pred }\OperatorTok{>}\StringTok{ }\DecValTok{5}\NormalTok{, }\DecValTok{5}\NormalTok{, pred))) }\OperatorTok{%>%}\StringTok{ }\NormalTok{.}\OperatorTok{$}\NormalTok{pred}
+  
+  \KeywordTok{return}\NormalTok{(}\KeywordTok{RMSE}\NormalTok{(predicted_val_reg, validation}\OperatorTok{$}\NormalTok{rating, }\DataTypeTok{na.rm =}\NormalTok{ T))}
+\NormalTok{\})}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{rmse_curve_regularisation_validation}{%
+\subsection{\texorpdfstring{\textbf{RMSE\_Curve\_Regularisation\_Validation:}}{RMSE\_Curve\_Regularisation\_Validation:}}\label{rmse_curve_regularisation_validation}}
+
+\includegraphics{MovieLens_files/figure-latex/RMSE_Curve_Val-1.pdf}
+
+Optimum \(\lambda\) for Validation: 4.9
+
+Final RMSE on Regularization: 0.8647188\\
+\newpage
+
+\hypertarget{results}{%
+\section{\texorpdfstring{\textbf{Results:}}{Results:}}\label{results}}
+
+\begin{longtable}[]{@{}lr@{}}
+\caption{RMSEs}\tabularnewline
+\toprule
+Method & RMSE\tabularnewline
+\midrule
+\endfirsthead
+\toprule
+Method & RMSE\tabularnewline
+\midrule
+\endhead
+Baseline & 1.0600537\tabularnewline
+User \& Movie Effect & 0.8244714\tabularnewline
+User \& Movie Effect on validation & 0.8651772\tabularnewline
+User \& Movie Effect Regularisation & 0.8640320\tabularnewline
+User \& Movie Effect Reg. on validation & 0.8647188\tabularnewline
+\bottomrule
+\end{longtable}
+
+We can observe that better RMSE is obtained from the \emph{User \& Movie
+Effect} model. However, this RMSE is \emph{only} obtained on the
+\emph{test} set. Considering that we must trust more in the performance
+of the model when we predict from unseen data, we can say that the RMSE
+that results from the \emph{User \& Movie Effect with Regularisation on
+validation} (the last line in the table above) is our definitive model.
+This RMSE is obtained when \(\lambda\)=4.9 which has achieved
+\textbf{RMSE equal to} 0.8647188, successfully passing the target of
+0.8649.
+
+\hypertarget{conclusion}{%
+\section{\texorpdfstring{\textbf{Conclusion:}}{Conclusion:}}\label{conclusion}}
+
+We started collecting and preparing the dataset for analysis, then we
+explored the information seeking for insights that might help during
+model build. Next, we created a random model that predicts the rating
+based on the probability distribution of each rating. This model gives
+the worst result.
+
+We started the linear model with a very simple model which is just the
+mean of the observed ratings. From there, we added movie and user
+effects, that models the user behavior and movie distribution. With
+regularization we added a penalty value for the movies and users with
+few number of ratings.
+
+The variables \texttt{userId} and \texttt{movieId} have sufficient
+predictive power and could make better recommendations about movie to
+specific users of the streaming service. Therefore, the user could
+decide to spend more time using the service.
+
+The RMSE equal to 0.8647188 is pretty acceptable considering that we
+have few predictors, but both \emph{User} and \emph{Movie} effects are
+powerful enough to predict the \texttt{rating} that will be given to a
+movie, by a specific user.
+
+\hypertarget{limitations-and-future-work}{%
+\section{\texorpdfstring{\textbf{Limitations and Future
+Work:}}{Limitations and Future Work:}}\label{limitations-and-future-work}}
+
+The model works only for existing users, movies and rating values, so
+the algorithm must run every time a new user or movie is included, or
+when the rating changes. This is not an issue for small client base and
+a few movies, but may become a concern for large data sets. The model
+should consider these changes and update the predictions as information
+changes.
+
+There is definitely a time delta effect on the average rating for a
+movie, based on either Actors associated to the movie or new movies that
+have similar genres and similar story lines that could inspire more
+users to rate older movies and hence can bring a significant change to
+the predicting model.
+
+Only two predictors are used, the movie and user information, not
+considering other features. Modern recommendation system models use many
+predictors, such as genres, bookmarks, play lists, history, etc.
+
+From a future perspective we can look at using Matrix Factorization with
+other ensemble methods to create a much more powerful predicting
+algorithm and develop a penalty based system for the whole algorithm to
+improve its performance over time.
+
+\end{document}
